@@ -1,0 +1,94 @@
+
+
+limites et améliorations
+
+pourquoi ça marche pas trop, comment faire pour que ça marche
+
+ce qu'on a pas eu le temps de faire. 
+
+
+
+nos données 
+
+on a des astrocytes segmentés MAIS les chercheurs ont choisis que certains astrocytes "les plus segmentables" 
+ça pose problème parce que le programme va forcément trouver un noyau ou un processus ailleurs 
+
+la manière de segmenter, on déborde trop, et le programme va pas comprendre si il trouve une solution et finalement c'est une erreur ou si il ne trouve pas une solution, qu'il est confinant mais qu'il a tord. 
+
+le pire : la partie spongiforme : il ne faut surtout pas la considérer comme partie spongiforme parce que c'est plutôt le masque de tt ce qu'on veut pas trop annoter parce que c'est long
+
+
+concrètement qu'est ce qu'on peut faire ? 
+
+changer de manière de voir les choses : plutôt que de considérer qu'on a un masque par parties et qu'on fait de la segmentation sémantique, chercher uniquement à repérer les parties d'intérêt. 
+
+puis, recréer les vrais masques nous même : 
+
+entrainer un modèle simple qui peut supprimer le fond (uniquement sur le cytosol)
+
+utiliser la partie spongiforme pour supprimer tout le reste du calque. 
+entrainer le modèle sur les données simples 
+obtenir un modèle qui peut vraiment segmenter les noyaux et processus
+
+en parallèle : 
+entraîner un modèle qui peut trouver la région d'intérêt (sans les parties spongiformes) 
+tester notre programme noyaux / processus sur les données originales : si on a plusieurs noyaux / processus c'est que c'est bon
+pour les spongiformes,  utiliser notre programme noyau/processus sur l'image d'origine, et supprimer les résultats au masque, puis rajouter les résultats de la segmentation faite sur le masque ou on a tout supprimé dans un premier temps. pour obtenir le masque des spongiformes, on peut ou pas entraîner un modèle sur ce masque pour la suite. 
+
+
+
+outils à notre disposition : 
+
+Augmentation de données : 
+on a oublié qu'on avait des données en 3D pour l'augmentation 
+prévoir,
+ une augmentation de donnés volumétrique
+c'est idéal pour notre cas de figure ou l'objet peut réellement être tourné dans les 3 dimensions.
+(et augmenter les données de manière elastique) 
+Améliorer la segmentation : 
+le fait que le jeu de données soit en 2D. 
+on a des piles en 3D, on a non seulement réduit la taille des images de la pile mais aussi oublié l'analyse sur le troisième plan 
+
+
+Améliorer les données 
+watersheed sur le noyau 
+délimiter les contours et définir un poids proche de 0 pour éviter de s'entraîner dessus 
+Mais on a pas encore assez de données 
+
+Plusieurs solutions : 
+
+on découpe l'image en petite parties   
+c'est faisable pour détecter les noyaux et les processus parce qu'on n'est plus dans l'optique de garder les neurones "entier", mais ça n'aiderait pas pour la partie la plus compliquée (trouver les régions d'intérêt) 
+
+diminuer les connexions en haut 
+ 
+utiliser un dense U-Net et diminuer les skip connexions en haut du unet
+
+utiliser un CE U-Net (DAC et RMP) sans le dual channel block et le res path 
+
+utiliser CoordConv / Distance map 
+
+
+utiliser un réseau 3D mais 
+
+mitochondries
+problème avec le type de segmentations : 
+on peut pas 
+utiliser cellpose qui est pré entrainé 
+c'est un U-Net qui prédit des gradients d'espace 
+on doit utiliser unet 3D impérativement 
+combiner Focal loss dice loss et cldice 
+
+augmenter les données de manière elastique 
+
+
+
+En conclusion, on a des défis importants dans la partie du code pour réussir à dépasser les limites des données disponibles. 
+
+on a pas pu finir parce que
+Le temps de calcul nécessaire à modifier tous les paramètres sur des piles 3D est particulièrement long, les résultats ne sont pas garantis, et les modifications mettent du temps à se faire c'est pour cela qu'on a opté pour un modèle 2D. 
+
+mais des modifications sont possible et malgré les données le projet l'est aussi
+
+On peut encourager les chercheurs à changer leur méthode de segmentation, mais il y a de grandes chances que cela leur prenne trop de temps à réaliser. C'est pourquoi le fait de proposer cette solution n'est pas inutile. 
+
