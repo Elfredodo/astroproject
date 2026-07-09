@@ -17,11 +17,11 @@ jobs:
       - name: compiler le latex
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: "rapport latex code/main.tex"
+          root_file: "rapport_latex_code/main.tex"
           args: -interaction=nonstopmode -file-line-error -halt-on-error -lualatex
 
       - name: sauvegarder le PDF
         uses: actions/upload-artifact@v4
         with:
           name: PDF
-          path: "rapport latex code/main.pdf"
+          path: "rapport_latex_code/main.pdf"
