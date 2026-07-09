@@ -1,0 +1,27 @@
+name: Compiler le latex
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: envoyer le latex
+        uses: actions/checkout@v4
+
+      - name: compiler le latex
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          args: -interaction=nonstopmode -file-line-error -halt-on-error -lualatex
+
+      - name: sauvegarder le PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: PDF
+          path: main.pdf
