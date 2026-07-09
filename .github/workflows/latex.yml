@@ -17,7 +17,8 @@ jobs:
       - name: compiler le latex
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: "rapport_latex_code/main.tex"
+          root_file: "main.tex"
+          working_directory: "rapport_latex_code"
           args: -interaction=nonstopmode -file-line-error -halt-on-error -lualatex
 
       - name: sauvegarder le PDF
